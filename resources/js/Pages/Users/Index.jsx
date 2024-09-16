@@ -94,7 +94,7 @@ function Index({roles,users}) {
             axios.post('/admin/users', {
                 name: name,
                 email: email,
-                idRole: idRole
+                role: idRole
             },
             // {
             //     headers: {

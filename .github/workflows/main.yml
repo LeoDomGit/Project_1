@@ -39,9 +39,8 @@ jobs:
       - name: Install Node.js (latest version)
         uses: actions/setup-node@v2
         
-      - name: Create .env file
-        run: |
-          echo "VITE_OPEN_AI_KEY=${{ secrets.OPENAI_KEY }}" > .env
+      - name: Copy config.txt to .env
+        run: cat config/config.txt >> .env
 
       - name: Install NPM dependencies
         run: npm install

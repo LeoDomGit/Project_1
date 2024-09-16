@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'idRole',
         'status',
     ];
 
@@ -44,6 +45,6 @@ class User extends Authenticatable
     ];
     public function roles()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class,'idRole');
     }
 }

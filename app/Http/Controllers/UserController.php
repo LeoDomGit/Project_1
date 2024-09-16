@@ -26,7 +26,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::with('roles')->get();
         $roles = Role::all();
         return Inertia::render('Users/Index', ['users' => $users, 'roles' => $roles]);
     }
@@ -122,9 +122,11 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request,$id)
     {
-        //
+        $result= $this->updateTraits($this->model, $id, $request->all());
+        $result =$this->model::with('roles')->get();
+        return response()->json(['check'=>true,'data'=>$result], 200);
     }
 
     /**

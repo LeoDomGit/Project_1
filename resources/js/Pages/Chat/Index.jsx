@@ -187,7 +187,7 @@ function Index({ conversation, chats }) {
                     key={i}
                     model={{
                       message: message.content,
-                      direction: i % 2 === 0 ? 'incoming' : 'outgoing',
+                      direction: message.sender_id  !== 0 ? 'incoming' : 'outgoing',
                       position: "first"
                     }}
                   />

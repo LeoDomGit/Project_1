@@ -39,11 +39,11 @@ jobs:
       - name: Install Node.js (latest version)
         uses: actions/setup-node@v2
 
-      # - name: Install NPM dependencies
-      #   run: npm install
+      - name: Install NPM dependencies
+        run: npm install
 
-      # - name: Build front-end assets
-      #   run: npm run build
+      - name: Build front-end assets
+        run: npm run build
 
       - name: Remove node_modules folder
         run: rm -rf node_modules

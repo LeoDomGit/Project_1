@@ -47,12 +47,12 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|exists:roles,id',
+            'idRole' => 'required|exists:roles,id',
           
         ], [
             'name.required' => 'Chưa nhận được tên tài khoản',
-            'role.required' => 'Chưa nhận được loại tài khoản',
-            'role.exists' => 'Loại tài khoản không tồn tại',
+            'idRole.required' => 'Chưa nhận được loại tài khoản',
+            'idRole.exists' => 'Loại tài khoản không tồn tại',
             'email.required' => 'Chưa nhận được email',
             'email.email' => 'Email không đúng định dạng',
             'email.unique' => 'Email đã tồn tại',

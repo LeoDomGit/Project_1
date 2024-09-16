@@ -187,7 +187,8 @@ function Index({ conversation, chats }) {
                     key={i}
                     model={{
                       message: message.content,
-                      direction: message.sender === "ChatGPT" ? 'incoming' : 'outgoing',
+                      direction: i % 2 === 0 ? 'incoming' : 'outgoing',
+                      position: "first"
                     }}
                   />
                 ))}

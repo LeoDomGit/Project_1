@@ -20,9 +20,11 @@ class ChatController extends Controller
     {
         $userId = Auth::user()->id;
         $conversation = Conversation::firstOrCreate(['user_id' => $userId]);
+        $chat=Chat::where('conversation_id',$conversation->id)->get()->toArray();
         $this->conversation = $conversation;
         return  inertia::render('Chat/Index', [
-                'conversation' => $conversation
+                'conversation' => $conversation,
+                'chats'=>$chat
         ]);
     }
 

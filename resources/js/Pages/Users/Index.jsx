@@ -94,7 +94,7 @@ function Index({roles,users}) {
             axios.post('/admin/users', {
                 name: name,
                 email: email,
-                role: idRole
+                idRole: idRole
             },
             // {
             //     headers: {
@@ -117,7 +117,7 @@ function Index({roles,users}) {
                     });
                     resetCreate();
                     if (res.data.data) {
-                        setUsers(res.data.data);
+                        setData(res.data.data);
                         resetCreate()
                     } else {
                         setUsers([]);

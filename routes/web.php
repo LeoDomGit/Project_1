@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -24,6 +25,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/role-permissions', [PermissionsController::class, 'role_permission']);
         Route::get('/permissions/roles/{id}', [PermissionsController::class, 'get_permissions']);
         Route::resource('/users', UserController::class);
+        Route::resource('/conversations', ConversationController::class);
+   
     });
     Route::resource('/chat', ChatController::class)->middleware('auth');
     Route::get('/logout', [UserController::class, 'logout']);

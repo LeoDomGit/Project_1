@@ -117,11 +117,11 @@ class UserController extends Controller
         if (!$user) {
             return response()->json(['check' => false, 'msg' => 'Email không tồn tại']);
         }
-        
+
         if ($user->status != 1) {
             return response()->json(['check' => false, 'msg' => 'Tài khoản đã bị khóa']);
         }
-
+        Auth::login($user,true);
         return response()->json(['check' => true, 'msg' => 'Email hợp lệ']);
     }
      /**

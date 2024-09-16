@@ -33,4 +33,4 @@ Route::group(['middleware' => 'auth'], function () {
 
 });
 Route::post('/checkLogin', [UserController::class, 'checkLogin']);
-Route::post('/checkLogin', [UserController::class, 'checkLogin']);
+Route::post('/checkLogin-email', [UserController::class, 'checkLoginEmail']);

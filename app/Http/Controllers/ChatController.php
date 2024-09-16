@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Conversation;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Validator;
+
 class ChatController extends Controller
 {
     protected $conversation;
@@ -20,7 +22,7 @@ class ChatController extends Controller
         $conversation = Conversation::firstOrCreate(['user_id' => $userId]);
         $this->conversation = $conversation;
         return  inertia::render('Chat/Index', [
-
+                'conversation' => $conversation
         ]);
     }
 
@@ -37,7 +39,22 @@ class ChatController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'conversation_id' => 'required',
+            'content' => 'required',
+        ], [
+            'conversation_id.required' => 'Chưa có tên của chat box',
+            'content.required' => 'Chưa có tên của chat box',
+            
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $data=$request->all();
+        $data['created_at']=now();
+        Chat::create($data);
+        $data=Chat::where('conversation_id',$data['conversation_id'])->get();
+        return response()->json(['check' => true, 'data' => $data]);
     }
 
     /**

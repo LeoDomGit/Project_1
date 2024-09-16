@@ -73,6 +73,7 @@ jobs:
           echo "MAIL_FROM_ADDRESS=${{ secrets.MAIL_USERNAME }}" >> .env
           echo "MAIL_FROM_NAME=\"Laravel\"" >> .env
           echo "VITE_OPEN_AI_KEY=${{ secrets.VITE_OPEN_AI_KEY }}" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_KEY }}" >> .env
 
       - name: Install NPM dependencies
         run: npm install

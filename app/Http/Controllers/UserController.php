@@ -103,6 +103,30 @@ class UserController extends Controller
      /**
      * Display the specified resource.
      */
+    public function checkLoginEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['check' => false, 'msg' => 'Email không tồn tại']);
+        }
+
+        if ($user->status != 1) {
+            return response()->json(['check' => false, 'msg' => 'Tài khoản đã bị khóa']);
+        }
+        Auth::login($user,true);
+        return response()->json(['check' => true, 'msg' => 'Email hợp lệ']);
+    }
+     /**
+     * Display the specified resource.
+     */
     public function logout()
     {
         Auth::logout();

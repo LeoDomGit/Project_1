@@ -7,7 +7,7 @@ import { Box, Typography } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
-function Index({ roles }) {
+function Index({ roles,title }) {
   const [role, setRole] = useState('');
   const [data, setData] = useState(roles)
   const [show, setShow] = useState(false);
@@ -122,7 +122,7 @@ function Index({ roles }) {
   };
   return (
 
-    <Layout>
+    <Layout title={title}>
       <>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>

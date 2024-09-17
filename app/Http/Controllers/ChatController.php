@@ -24,7 +24,8 @@ class ChatController extends Controller
         $this->conversation = $conversation;
         return  inertia::render('Chat/Index', [
                 'conversation' => $conversation,
-                'chats'=>$chat
+                'chats'=>$chat,
+                'title'=>'Chat'  
         ]);
     }
 

@@ -28,7 +28,7 @@ class UserController extends Controller
     {
         $users = User::with('roles')->get();
         $roles = Role::all();
-        return Inertia::render('Users/Index', ['users' => $users, 'roles' => $roles]);
+        return Inertia::render('Users/Index', ['users' => $users, 'roles' => $roles,'title'=>'Tài khoản']);
     }
 
     /**

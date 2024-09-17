@@ -19,7 +19,7 @@ class ChatController extends Controller
     public function index()
     {
         $userId = Auth::user()->id;
-        $conversation = Conversation::firstOrCreate(['user_id' => $userId]);
+        $conversation = Conversation::where('user_id', $userId)->orderBy('created_at', 'desc')->firstOrCreate(['user_id' => $userId]);
         $conversations= Conversation::where('user_id',$userId)->get();
         $chat=Chat::where('conversation_id',$conversation->id)->get()->toArray();
         $this->conversation = $conversation;

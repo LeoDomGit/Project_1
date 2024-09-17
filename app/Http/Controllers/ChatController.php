@@ -65,9 +65,10 @@ class ChatController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Chat $chat)
+    public function show($id)
     {
-        //
+        $chat=Chat::where('conversation_id',$id)->get();
+        return response()->json(['check' => true, 'data' => $chat]);
     }
 
     /**

@@ -29,6 +29,7 @@ function Index({ conversation, chats,conversations }) {
   const [editName, setEditName] = useState(false);
   const [messages, setMessages] = useState(chats);
   const [isTyping, setIsTyping] = useState(false);
+  const [idConversation,setIdConversation] = useState(conversation.id);
   const API_KEY = import.meta.env.VITE_OPEN_AI_KEY;
 
   const notyf = new Notyf({
@@ -59,7 +60,7 @@ function Index({ conversation, chats,conversations }) {
     try {
       // Save user message to database
       await axios.post('/chat', {
-        conversation_id: dataConversation.id,
+        conversation_id: idConversation,
         sender_id: 1, // Adjust if authenticated
         response: 0,
         content: message
@@ -81,7 +82,7 @@ function Index({ conversation, chats,conversations }) {
 
         // Save bot response to database
         await axios.post('/chat', {
-          conversation_id: dataConversation.id,
+          conversation_id: idConversation,
           sender_id: 0, // Bot sender ID
           response: true,
           content: content
@@ -98,7 +99,11 @@ function Index({ conversation, chats,conversations }) {
       setIsTyping(false);
     }
   };
-
+  useEffect(()=>{
+      axios.get(`/chat/${idConversation}`).then((res)=>{
+        setMessages(res.data.data);
+      })
+  },[idConversation])
   async function processMessageToChatGPT(chatMessages) {
     const apiMessages = chatMessages.map((messageObject) => {
       const role = messageObject.sender === "ChatGPT" ? "assistant" : "user";
@@ -140,7 +145,14 @@ function Index({ conversation, chats,conversations }) {
       throw error;
     }
   }
-
+  const handleNewChat = (e) => {
+    e.preventDefault();
+    axios.post('/admin/conversations', { name: 'New Chat' })
+      .then((res) => {
+        setDataConversations(res.data.data);
+        notyf.success('New chat created successfully');
+      })
+  }
   const submitEditName = () => {
     if (chatName === '') {
       notyf.error('Conversation name cannot be empty');
@@ -164,10 +176,12 @@ function Index({ conversation, chats,conversations }) {
           <MainContainer style={{ height: '600px' }} responsive>
             {/* Left Sidebar for conversations */}
             <Sidebar position="left" scrollable={false}>
-              <Search placeholder="Search..." />
+              <Search placeholder="Search..." /> 
+              <button className='btn btn-primary' onClick={(e)=>handleNewChat(e)}>New chat</button>
               <ConversationList>
                 {dataConversations.length > 0 && dataConversations.map((conversation) => (
                   <Conversation 
+                  onClick={(e)=>setIdConversation(conversation.id)}
                     key={conversation.id} 
                     name={conversation.name} 
                     lastSenderName="GPT" 

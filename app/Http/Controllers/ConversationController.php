@@ -29,7 +29,21 @@ class ConversationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+          
+        ], [
+            'name.required' => 'Chưa có tên của chat box',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
+        }
+        $conversation = Conversation::create([
+            'name' => $request->name,
+            'user_id' => Auth::id(),
+        ]);
+        $conversations = Conversation::where('user_id',Auth::id())->get();
+        return response()->json(['check' => true, 'data' => $conversations]);    
     }
 
     /**
@@ -37,7 +51,7 @@ class ConversationController extends Controller
      */
     public function show(Conversation $conversation)
     {
-        //
+        
     }
 
     /**

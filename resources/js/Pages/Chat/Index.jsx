@@ -197,7 +197,7 @@ function Index({ conversation, chats }) {
           <ConversationHeader>
             <ConversationHeader.Back />
             <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Zoe" />
-            <ConversationHeader.Content userName="Zoe" info="Active 10 mins ago" />
+            <ConversationHeader.Content userName="User"/>
             <ConversationHeader.Actions>
               <AttachmentButton />
               <SendButton />

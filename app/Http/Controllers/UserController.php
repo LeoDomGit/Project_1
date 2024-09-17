@@ -151,9 +151,22 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function switch($id)
     {
-        //
+        $user = User::find($id);
+        
+        if (!$user) {
+            return response()->json(['check' => false, 'msg' => 'Không tìm thấy mã tài khoản']);
+        }
+        
+        $newStatus = $user->status ? 0 : 1;
+        
+        $user->update([
+            'status' => $newStatus,
+            'updated_at' => now()
+        ]);
+        $data= $this->model::with('roles')->get();
+        return response()->json(['check' => true, 'msg' => 'Trạng thái tài khoản đã được cập nhật','data'=>$data]);
     }
 
     /**

@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/permissions/roles/{id}', [PermissionsController::class, 'get_permissions']);
         Route::resource('/users', UserController::class);
         Route::resource('/conversations', ConversationController::class);
+        Route::put('users/switch/{id}',[UserController::class,'switch']);
    
     });
     Route::resource('/chat', ChatController::class)->middleware('auth');

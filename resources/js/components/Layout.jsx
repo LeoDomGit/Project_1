@@ -1,29 +1,30 @@
 /* eslint-disable */
-import React from 'react'
+import React, { useState } from 'react'
 import { Sidebar, Menu, MenuItem, useProSidebar, SubMenu } from "react-pro-sidebar";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import GroupIcon from '@mui/icons-material/Group';
-
+import "@chatscope/chat-ui-kit-styles/themes/default/main.scss";
 import ChatIcon from '@mui/icons-material/Chat';
 import "../../css/app.css";
 function Layout({ children }) {
   const { collapseSidebar } = useProSidebar();
+  const [collapsed, setCollapsed] = useState(true);
   return (
     <>
-      <div className='row w-100'>
+      <div className='row w-100 '>
       </div>
       <div style={({ height: "90vh" }, { display: "flex" })}>
-        <Sidebar style={{ minHeight: "90vh" }}>
+        <Sidebar collapsed={collapsed} style={{ minHeight: "90vh" }}>
           <Menu>
             <MenuItem
               icon={<MenuOutlinedIcon />}
               onClick={() => {
-                collapseSidebar();
+                setCollapsed(!collapsed);
               }}
               style={{ textAlign: "center" }}
             >
               {" "}
-              <h2>Admin</h2>
+             <img src="https://cdn.bitrix24.com/b15917383/landing/965/965caaa6885d393138add44f2d57cd50/logo_text_1x.png"  className='img-fluid' style={{height: "40px"}} alt="" />
             </MenuItem>
             <SubMenu label="Tài khoản" icon={<GroupIcon />}>
             <a href={'/admin/permissions'}> <MenuItem icon={<GroupIcon />}>Quyền tài khoản</MenuItem></a>

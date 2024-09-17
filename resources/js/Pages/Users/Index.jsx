@@ -7,7 +7,7 @@ import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
-function Index({roles,users}) {
+function Index({roles,users,title}) {
     const [show1, setShow1] = useState(false);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -273,7 +273,7 @@ function Index({roles,users}) {
     useEffect(()=>{
     },[])
     return (
-        <Layout>
+        <Layout title={title}>
             <>
             <Modal show={show1} onHide={handleClose1}>
                     <Modal.Header closeButton>

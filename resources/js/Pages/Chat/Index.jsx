@@ -3,11 +3,21 @@ import Layout from '../../components/Layout';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import {
   MainContainer,
+  Sidebar,
   ChatContainer,
   MessageList,
   Message,
   MessageInput,
   TypingIndicator,
+  ConversationHeader,
+  Avatar,
+  ConversationList,
+  Conversation,
+  InputToolbox,
+  ExpansionPanel,
+  AttachmentButton,
+  SendButton,
+  Search,
 } from '@chatscope/chat-ui-kit-react';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
@@ -31,13 +41,6 @@ function Index({ conversation, chats }) {
       { type: 'info', background: '#24b3f0', color: 'white', duration: 1500, dismissible: false, icon: '<i class="bi bi-bag-check"></i>' }
     ]
   });
-
-  useEffect(() => {
-    // Fetch messages from the server on load
-    axios.get(`/api/messages/${dataConversation.id}`)
-      .then(response => setMessages(response.data))
-  }, [dataConversation.id]);
-
   const handleSendRequest = async (message) => {
     if (!message || message.trim() === '') {
       notyf.error('Message cannot be empty');
@@ -157,7 +160,7 @@ function Index({ conversation, chats }) {
   return (
     <Layout>
       <div className="row mt-5">
-        <div className="col-md-7" style={{ height: '700px' }}>
+        <div className="col-md" style={{ height: '700px' }}>
           <div className="input-group mb-3">
             <input
               type="text"
@@ -178,24 +181,56 @@ function Index({ conversation, chats }) {
               </button>
             )}
           </div>
+          <MainContainer style={{ height: '600px' }} responsive>
+        {/* Left Sidebar for conversations */}
+        <Sidebar position="left" scrollable={false}>
+          <Search placeholder="Search..." />
+          <ConversationList>
+            <Conversation name="GPT" lastSenderName="GPT" info={messages[messages.length-1].content}>
+              <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Lilly" status="available" />
+            </Conversation>
+          </ConversationList>
+        </Sidebar>
 
-          <MainContainer>
-            <ChatContainer>
-              <MessageList typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}>
-                {messages.map((message, i) => (
-                  <Message
-                    key={i}
-                    model={{
-                      message: message.content,
-                      direction: message.sender_id  !== 0 ? 'incoming' : 'outgoing',
-                      position: "first"
-                    }}
-                  />
-                ))}
-              </MessageList>
-              <MessageInput placeholder="Send a Message" onSend={handleSendRequest} />
-            </ChatContainer>
-          </MainContainer>
+        {/* Chat Container */}
+        <ChatContainer>
+          <ConversationHeader>
+            <ConversationHeader.Back />
+            <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Zoe" />
+            <ConversationHeader.Content userName="Zoe" info="Active 10 mins ago" />
+            <ConversationHeader.Actions>
+              <AttachmentButton />
+              <SendButton />
+            </ConversationHeader.Actions>
+          </ConversationHeader>
+          <MessageList typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}>
+            {messages.map((message, i) => (
+              <Message
+                key={i}
+                model={{
+                  message: message.content,
+                  direction: message.sender_id !== 0 ? 'outgoing' : 'incoming',
+                  position: "single",
+                }}
+              >
+                <Avatar src={message.sender === "ChatGPT" ? 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png' : 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} />
+              </Message>
+            ))}
+          </MessageList>
+          <MessageInput placeholder="Type a message..." onSend={handleSendRequest} />
+          <InputToolbox>
+            <AttachmentButton />
+            <SendButton />
+          </InputToolbox>
+        </ChatContainer>
+
+        {/* Right Sidebar for info panels */}
+        <Sidebar position="right">
+          <ExpansionPanel open title="INFO">
+          </ExpansionPanel>
+        </Sidebar>
+      </MainContainer>
+          
         </div>
       </div>
     </Layout>

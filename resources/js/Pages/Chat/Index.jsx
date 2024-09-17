@@ -186,7 +186,7 @@ function Index({ conversation, chats }) {
         <Sidebar position="left" scrollable={false}>
           <Search placeholder="Search..." />
           <ConversationList>
-            <Conversation name="GPT" lastSenderName="GPT" info={messages[messages.length-1].content}>
+            <Conversation name="GPT" lastSenderName="GPT" info={messages.length>0 && messages[messages.length-1].content}>
               <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Lilly" status="available" />
             </Conversation>
           </ConversationList>

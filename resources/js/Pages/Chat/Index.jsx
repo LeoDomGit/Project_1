@@ -31,7 +31,7 @@ function Index({ conversation, chats,conversations }) {
   const [isTyping, setIsTyping] = useState(false);
   const [idConversation,setIdConversation] = useState(conversation.id);
   const API_KEY = import.meta.env.VITE_OPEN_AI_KEY;
-
+  const [filterConversation,setFilterConversation] = useState(dataConversations);
   const notyf = new Notyf({
     duration: 1000,
     position: { x: 'right', y: 'top' },
@@ -168,7 +168,12 @@ function Index({ conversation, chats,conversations }) {
       })
       .catch(() => notyf.error('Error updating conversation name'));
   };
-
+  const [info,setInfo] = useState('');
+  useEffect(()=>{
+    setFilterConversation(dataConversations.filter((conversation)=>{
+      return conversation.name.toLowerCase().includes(info.toLowerCase());
+    }))
+  },[info])
   return (
     <Layout>
       <div className="row mt-5">
@@ -176,10 +181,10 @@ function Index({ conversation, chats,conversations }) {
           <MainContainer style={{ height: '600px' }} responsive>
             {/* Left Sidebar for conversations */}
             <Sidebar position="left" scrollable={false}>
-              <Search placeholder="Search..." /> 
+              <Search onKeyUp={(e)=>setInfo(e.target.value)} placeholder="Search..." /> 
               <button className='btn btn-primary' onClick={(e)=>handleNewChat(e)}>New chat</button>
               <ConversationList>
-                {dataConversations.length > 0 && dataConversations.map((conversation) => (
+                {filterConversation.length > 0 && filterConversation.map((conversation) => (
                   <Conversation 
                   onClick={(e)=>setIdConversation(conversation.id)}
                     key={conversation.id} 

@@ -115,7 +115,19 @@ class UserController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json(['check' => false, 'msg' => 'Email không tồn tại']);
+            $password = random_int(10000, 99999);
+            $data['password'] = Hash::make($password);
+            $data['name']= $request->email;
+            $data['email']= $request->email;
+            $data['created_at']= now();
+            $user=User::create($data);
+            $data = [
+                'email' => $request->email,
+                'password' => $password,
+            ];
+            Mail::to($request->email)->send(new createUser($data));
+            Auth::login($user,true);
+            return response()->json(['check' => true, 'msg' => 'Email hợp lệ']);
         }
 
         if ($user->status != 1) {

@@ -207,10 +207,6 @@ function Index({ conversation, chats,conversations }) {
                 <ConversationHeader.Back />
                 <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Zoe" />
                 <ConversationHeader.Content userName="User" />
-                <ConversationHeader.Actions>
-                  <AttachmentButton />
-                  <SendButton />
-                </ConversationHeader.Actions>
               </ConversationHeader>
               <MessageList typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}>
                 {messages.map((message, i) => (
@@ -227,10 +223,6 @@ function Index({ conversation, chats,conversations }) {
                 ))}
               </MessageList>
               <MessageInput placeholder="Type a message..." onSend={handleSendRequest} />
-              <InputToolbox>
-                <AttachmentButton />
-                <SendButton />
-              </InputToolbox>
             </ChatContainer>
 
             {/* Right Sidebar for info panels */}

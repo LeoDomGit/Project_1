@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Conversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 class ConversationController extends Controller
 {
     /**
@@ -68,7 +69,8 @@ class ConversationController extends Controller
         $conversation->name = $request->name;
         $conversation->updated_at = now();
         $conversation->save();
-        return response()->json(['check' => true, 'data' => $conversation]);
+        $conversations = Conversation::where('user_id',Auth::id())->get();
+        return response()->json(['check' => true, 'data' => $conversation,'conversations'=>$conversations]);
     }
 
     /**

@@ -23,8 +23,8 @@ import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
 
-function Index({ conversation, chats }) {
-  const [dataConversation, setDataConversation] = useState(conversation);
+function Index({ conversation, chats,conversations }) {
+  const [dataConversations, setDataConversations] = useState(conversations);
   const [chatName, setChatName] = useState(conversation.name);
   const [editName, setEditName] = useState(false);
   const [messages, setMessages] = useState(chats);
@@ -63,7 +63,7 @@ function Index({ conversation, chats }) {
         sender_id: 1, // Adjust if authenticated
         response: 0,
         content: message
-      }).then((res)=>{
+      }).then((res) => {
         setMessages(res.data.data);
       });
 
@@ -85,7 +85,7 @@ function Index({ conversation, chats }) {
           sender_id: 0, // Bot sender ID
           response: true,
           content: content
-        }).then((res)=>{
+        }).then((res) => {
           setMessages(res.data.data);
         });
       } else {
@@ -147,11 +147,12 @@ function Index({ conversation, chats }) {
       return;
     }
 
-    axios.put(`/admin/conversations/${dataConversation.id}`, { name: chatName })
-      .then((response) => {
-        setDataConversation(response.data);
-        setChatName(response.data.name);
+    axios.put(`/admin/conversations/${conversation.id}`, { name: chatName })
+      .then((res) => {
+        console.log(res.data);
+        setChatName(res.data.data.name);
         setEditName(false);
+        setDataConversations(res.data.conversations);
         notyf.success('Conversation name updated successfully');
       })
       .catch(() => notyf.error('Error updating conversation name'));
@@ -161,17 +162,73 @@ function Index({ conversation, chats }) {
     <Layout>
       <div className="row mt-5">
         <div className="col-md" style={{ height: '700px' }}>
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              aria-label="chat_name"
-              value={chatName}
-              onChange={(e) => setChatName(e.target.value)}
-              disabled={!editName}
-              aria-describedby="button-addon2"
-            />
-            {editName ? (
+          <MainContainer style={{ height: '600px' }} responsive>
+            {/* Left Sidebar for conversations */}
+            <Sidebar position="left" scrollable={false}>
+              <Search placeholder="Search..." />
+              <ConversationList>
+                {dataConversations.length > 0 && dataConversations.map((conversation) => (
+                  <Conversation 
+                    key={conversation.id} 
+                    name={conversation.name} 
+                    lastSenderName="GPT" 
+                    info={messages.length > 0 ? messages[messages.length - 1].content : ''}
+                  >
+                    <Avatar 
+                      src='https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png' 
+                      name="Lilly" 
+                      status="available" 
+                    />
+                  </Conversation>
+                ))}
+              </ConversationList>
+            </Sidebar>
+
+            {/* Chat Container */}
+            <ChatContainer>
+              <ConversationHeader>
+                <ConversationHeader.Back />
+                <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Zoe" />
+                <ConversationHeader.Content userName="User" />
+                <ConversationHeader.Actions>
+                  <AttachmentButton />
+                  <SendButton />
+                </ConversationHeader.Actions>
+              </ConversationHeader>
+              <MessageList typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}>
+                {messages.map((message, i) => (
+                  <Message
+                    key={i}
+                    model={{
+                      message: message.content,
+                      direction: message.sender_id !== 0 ? 'outgoing' : 'incoming',
+                      position: "single",
+                    }}
+                  >
+                    <Avatar src={message.sender === "ChatGPT" ? 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png' : 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} />
+                  </Message>
+                ))}
+              </MessageList>
+              <MessageInput placeholder="Type a message..." onSend={handleSendRequest} />
+              <InputToolbox>
+                <AttachmentButton />
+                <SendButton />
+              </InputToolbox>
+            </ChatContainer>
+
+            {/* Right Sidebar for info panels */}
+            <Sidebar position="right">
+              <ExpansionPanel open title="Chat Name">
+                <div className="input-group mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={chatName}
+                    onChange={(e) => setChatName(e.target.value)}
+                    disabled={!editName}
+                    aria-describedby="button-addon2"
+                  />
+                 {editName ? (
               <button className="btn btn-outline-primary" type="button" onClick={submitEditName}>
                 Submit
               </button>
@@ -180,57 +237,12 @@ function Index({ conversation, chats }) {
                 Edit
               </button>
             )}
-          </div>
-          <MainContainer style={{ height: '600px' }} responsive>
-        {/* Left Sidebar for conversations */}
-        <Sidebar position="left" scrollable={false}>
-          <Search placeholder="Search..." />
-          <ConversationList>
-            <Conversation name="GPT" lastSenderName="GPT" info={messages.length>0 && messages[messages.length-1].content}>
-              <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Lilly" status="available" />
-            </Conversation>
-          </ConversationList>
-        </Sidebar>
+                </div>
 
-        {/* Chat Container */}
-        <ChatContainer>
-          <ConversationHeader>
-            <ConversationHeader.Back />
-            <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Zoe" />
-            <ConversationHeader.Content userName="User"/>
-            <ConversationHeader.Actions>
-              <AttachmentButton />
-              <SendButton />
-            </ConversationHeader.Actions>
-          </ConversationHeader>
-          <MessageList typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}>
-            {messages.map((message, i) => (
-              <Message
-                key={i}
-                model={{
-                  message: message.content,
-                  direction: message.sender_id !== 0 ? 'outgoing' : 'incoming',
-                  position: "single",
-                }}
-              >
-                <Avatar src={message.sender === "ChatGPT" ? 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png' : 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} />
-              </Message>
-            ))}
-          </MessageList>
-          <MessageInput placeholder="Type a message..." onSend={handleSendRequest} />
-          <InputToolbox>
-            <AttachmentButton />
-            <SendButton />
-          </InputToolbox>
-        </ChatContainer>
+              </ExpansionPanel>
+            </Sidebar>
+          </MainContainer>
 
-        {/* Right Sidebar for info panels */}
-        <Sidebar position="right">
-          <ExpansionPanel open title="INFO">
-          </ExpansionPanel>
-        </Sidebar>
-      </MainContainer>
-          
         </div>
       </div>
     </Layout>

@@ -80,7 +80,7 @@ function Login() {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="mb-5">
-                                            <h3>Đăng NHập</h3>
+                                            <h3>Đăng Nhập</h3>
                                         </div>
                                     </div>
                                 </div>

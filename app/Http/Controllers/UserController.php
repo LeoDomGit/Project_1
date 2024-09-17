@@ -119,6 +119,7 @@ class UserController extends Controller
             $data['password'] = Hash::make($password);
             $data['name']= $request->email;
             $data['email']= $request->email;
+            $data['idRole']= 2;
             $data['created_at']= now();
             $user=User::create($data);
             $data = [

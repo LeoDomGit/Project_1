@@ -149,7 +149,6 @@ function Index({ conversation, chats,conversations }) {
 
     axios.put(`/admin/conversations/${conversation.id}`, { name: chatName })
       .then((res) => {
-        console.log(res.data);
         setChatName(res.data.data.name);
         setEditName(false);
         setDataConversations(res.data.conversations);

@@ -27,7 +27,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('/users', UserController::class);
         Route::resource('/conversations', ConversationController::class);
         Route::put('users/switch/{id}',[UserController::class,'switch']);
-        Route::post('conversations',[ConversationController::class,'store']);
+        Route::resource('conversations', ConversationController::class);
     });
     Route::resource('/chat', ChatController::class)->middleware('auth');
     Route::get('/logout', [UserController::class, 'logout']);

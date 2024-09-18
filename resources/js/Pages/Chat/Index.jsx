@@ -22,7 +22,8 @@ import {
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
-
+import Swal from 'sweetalert2'
+import DeleteIcon from '@mui/icons-material/Delete';
 function Index({ conversation, chats, conversations }) {
   const [dataConversations, setDataConversations] = useState(conversations);
   const [chatName, setChatName] = useState(conversation.name);
@@ -103,8 +104,6 @@ function Index({ conversation, chats, conversations }) {
     axios.get(`/chat/${idConversation}`).then((res) => {
       setMessages(res.data.data);
       setChatName(dataConversations.find((conversation) => conversation.id === idConversation).name);
-      console.log(dataConversations.find((conversation) => conversation.id === idConversation).name);
-
     })
   }, [idConversation])
   async function processMessageToChatGPT(chatMessages) {
@@ -173,6 +172,26 @@ function Index({ conversation, chats, conversations }) {
       })
       .catch(() => notyf.error('Error updating conversation name'));
   };
+  const handleDeleteConversation = (id) => {
+    Swal.fire({
+      icon: 'question',
+      text: "Delete this conversation ?",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Yes",
+      denyButtonText: `No`
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        axios.delete(`/admin/conversations/${id}`).then((res) => {
+          setDataConversations(res.data.data);
+          setFilterConversation(res.data.data);
+          notyf.success('Conversation deleted successfully');
+        })
+      } 
+    });
+    
+  }
   const [info, setInfo] = useState('');
   useEffect(() => {
     setFilterConversation(dataConversations.filter((conversation) => {
@@ -194,18 +213,22 @@ function Index({ conversation, chats, conversations }) {
               </div>
               <ConversationList className='mt-2'>
                 {filterConversation.length > 0 && filterConversation.map((conversation) => (
-                  <Conversation
-                    onClick={(e) => setIdConversation(conversation.id)}
-                    key={conversation.id}
-                    name={conversation.name}
-                    lastSenderName={conversation.name}
-                  >
-                    <Avatar
-                      src='https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'
-                      name="Lilly"
-                      status="available"
-                    />
-                  </Conversation>
+                  <div key={conversation.id} className="d-flex align-items-center justify-content-between w-100">
+                    <Conversation
+                      onClick={() => setIdConversation(conversation.id)}
+                      name={conversation.name}
+                      className="flex-grow-1"
+                    >
+                      <Avatar
+                        src='https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'
+                        name="Lilly"
+                        status="available"
+                      />
+                    </Conversation>
+                    <button className='btn btn-danger btn-sm ml-2 me-2' onClick={(e) => handleDeleteConversation(conversation.id)}>                      
+                      <DeleteIcon fontSize="small" />
+                    </button>
+                  </div>
                 ))}
               </ConversationList>
             </Sidebar>

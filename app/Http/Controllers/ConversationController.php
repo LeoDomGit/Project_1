@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chat;
 use App\Models\Conversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -90,8 +91,15 @@ class ConversationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Conversation $conversation)
+    public function destroy($id)
     {
-        //
+        $conversation = Conversation::find($id);
+        if(!$conversation){
+            return response()->json(['check' => false, 'msg' => 'Không tìm thấy cuộc trò chuyện']);
+        }
+        Chat::where('conversation_id',$id)->delete();
+        $conversation->delete();
+        $conversations = Conversation::where('user_id',Auth::id())->get();
+        return response()->json(['check' => true, 'data' => $conversations]);
     }
 }

@@ -23,15 +23,15 @@ import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
 
-function Index({ conversation, chats,conversations }) {
+function Index({ conversation, chats, conversations }) {
   const [dataConversations, setDataConversations] = useState(conversations);
   const [chatName, setChatName] = useState(conversation.name);
   const [editName, setEditName] = useState(false);
   const [messages, setMessages] = useState(chats);
   const [isTyping, setIsTyping] = useState(false);
-  const [idConversation,setIdConversation] = useState(conversation.id);
+  const [idConversation, setIdConversation] = useState(conversation.id);
   const API_KEY = import.meta.env.VITE_OPEN_AI_KEY;
-  const [filterConversation,setFilterConversation] = useState(dataConversations);
+  const [filterConversation, setFilterConversation] = useState(dataConversations);
   const notyf = new Notyf({
     duration: 1000,
     position: { x: 'right', y: 'top' },
@@ -99,14 +99,14 @@ function Index({ conversation, chats,conversations }) {
       setIsTyping(false);
     }
   };
-  useEffect(()=>{
-      axios.get(`/chat/${idConversation}`).then((res)=>{
-        setMessages(res.data.data);
-        setChatName(dataConversations.find((conversation)=>conversation.id === idConversation).name);
-        console.log(dataConversations.find((conversation)=>conversation.id === idConversation).name);
+  useEffect(() => {
+    axios.get(`/chat/${idConversation}`).then((res) => {
+      setMessages(res.data.data);
+      setChatName(dataConversations.find((conversation) => conversation.id === idConversation).name);
+      console.log(dataConversations.find((conversation) => conversation.id === idConversation).name);
 
-      })
-  },[idConversation])
+    })
+  }, [idConversation])
   async function processMessageToChatGPT(chatMessages) {
     const apiMessages = chatMessages.map((messageObject) => {
       const role = messageObject.sender === "ChatGPT" ? "assistant" : "user";
@@ -173,12 +173,12 @@ function Index({ conversation, chats,conversations }) {
       })
       .catch(() => notyf.error('Error updating conversation name'));
   };
-  const [info,setInfo] = useState('');
-  useEffect(()=>{
-    setFilterConversation(dataConversations.filter((conversation)=>{
+  const [info, setInfo] = useState('');
+  useEffect(() => {
+    setFilterConversation(dataConversations.filter((conversation) => {
       return conversation.name.toLowerCase().includes(info.toLowerCase());
     }))
-  },[info])
+  }, [info])
   return (
     <Layout>
       <div className="row mt-5">
@@ -186,20 +186,24 @@ function Index({ conversation, chats,conversations }) {
           <MainContainer style={{ height: '600px' }} responsive>
             {/* Left Sidebar for conversations */}
             <Sidebar position="left" scrollable={false}>
-              <Search onKeyUp={(e)=>setInfo(e.target.value)} placeholder="Search..." /> 
-              <button className='btn btn-primary' onClick={(e)=>handleNewChat(e)}>New chat</button>
+              <Search onKeyUp={(e) => setInfo(e.target.value)} placeholder="Search..." />
+              <div className="row justify-content-center">
+                <div className="col-md-9">
+                  <button className='btn btn-primary w-100' onClick={(e) => handleNewChat(e)}>New chat</button>
+                </div>
+              </div>
               <ConversationList>
                 {filterConversation.length > 0 && filterConversation.map((conversation) => (
-                  <Conversation 
-                  onClick={(e)=>setIdConversation(conversation.id)}
-                    key={conversation.id} 
-                    name={conversation.name} 
-                    lastSenderName={conversation.name} 
+                  <Conversation
+                    onClick={(e) => setIdConversation(conversation.id)}
+                    key={conversation.id}
+                    name={conversation.name}
+                    lastSenderName={conversation.name}
                   >
-                    <Avatar 
-                      src='https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png' 
-                      name="Lilly" 
-                      status="available" 
+                    <Avatar
+                      src='https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'
+                      name="Lilly"
+                      status="available"
                     />
                   </Conversation>
                 ))}
@@ -242,15 +246,15 @@ function Index({ conversation, chats,conversations }) {
                     disabled={!editName}
                     aria-describedby="button-addon2"
                   />
-                 {editName ? (
-              <button className="btn btn-outline-primary" type="button" onClick={submitEditName}>
-                Submit
-              </button>
-            ) : (
-              <button className="btn btn-outline-primary" type="button" onClick={() => setEditName(true)}>
-                Edit
-              </button>
-            )}
+                  {editName ? (
+                    <button className="btn btn-outline-primary" type="button" onClick={submitEditName}>
+                      Submit
+                    </button>
+                  ) : (
+                    <button className="btn btn-outline-primary" type="button" onClick={() => setEditName(true)}>
+                      Edit
+                    </button>
+                  )}
                 </div>
 
               </ExpansionPanel>

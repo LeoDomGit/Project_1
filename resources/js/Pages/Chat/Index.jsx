@@ -225,7 +225,7 @@ function Index({ conversation, chats, conversations }) {
                         status="available"
                       />
                     </Conversation>
-                    <button className='btn btn-danger btn-sm ml-2 me-2' onClick={(e) => handleDeleteConversation(conversation.id)}>                      
+                    <button className='btn btn-danger rounded btn-sm ml-2 me-2' onClick={(e) => handleDeleteConversation(conversation.id)}>                      
                       <DeleteIcon fontSize="small" />
                     </button>
                   </div>

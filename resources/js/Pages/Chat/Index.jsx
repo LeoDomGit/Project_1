@@ -102,6 +102,9 @@ function Index({ conversation, chats,conversations }) {
   useEffect(()=>{
       axios.get(`/chat/${idConversation}`).then((res)=>{
         setMessages(res.data.data);
+        setChatName(dataConversations.find((conversation)=>conversation.id === idConversation).name);
+        console.log(dataConversations.find((conversation)=>conversation.id === idConversation).name);
+
       })
   },[idConversation])
   async function processMessageToChatGPT(chatMessages) {
@@ -150,6 +153,7 @@ function Index({ conversation, chats,conversations }) {
     axios.post('/admin/conversations', { name: 'New Chat' })
       .then((res) => {
         setDataConversations(res.data.data);
+        setFilterConversation(res.data.data);
         notyf.success('New chat created successfully');
       })
   }
@@ -159,11 +163,12 @@ function Index({ conversation, chats,conversations }) {
       return;
     }
 
-    axios.put(`/admin/conversations/${conversation.id}`, { name: chatName })
+    axios.put(`/admin/conversations/${idConversation}`, { name: chatName })
       .then((res) => {
         setChatName(res.data.data.name);
         setEditName(false);
         setDataConversations(res.data.conversations);
+        setFilterConversation(res.data.conversations);
         notyf.success('Conversation name updated successfully');
       })
       .catch(() => notyf.error('Error updating conversation name'));
@@ -206,7 +211,7 @@ function Index({ conversation, chats,conversations }) {
               <ConversationHeader>
                 <ConversationHeader.Back />
                 <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Zoe" />
-                <ConversationHeader.Content userName="User" />
+                <ConversationHeader.Content userName={chatName} />
               </ConversationHeader>
               <MessageList typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}>
                 {messages.map((message, i) => (

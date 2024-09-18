@@ -32,6 +32,7 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255',
             'summary' => 'required|string|max:255',
+            'image' => 'required',
         ]);
         if($validator->fails()){
             return response()->json(['check'=>false,'msg'=>$validator->errors()->first()],200);

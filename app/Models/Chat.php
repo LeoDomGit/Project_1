@@ -15,6 +15,7 @@ class Chat extends Model
         'sender_id',
         'response',
         'content',
+        'image',
         'created_at',
         'updated_at',
     ];

@@ -192,7 +192,7 @@ function Index({ conversation, chats, conversations }) {
                   <button className='btn btn-primary w-100' onClick={(e) => handleNewChat(e)}>New chat</button>
                 </div>
               </div>
-              <ConversationList>
+              <ConversationList className='mt-2'>
                 {filterConversation.length > 0 && filterConversation.map((conversation) => (
                   <Conversation
                     onClick={(e) => setIdConversation(conversation.id)}

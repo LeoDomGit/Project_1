@@ -26,7 +26,7 @@ function Layout({ children }) {
               {" "}
              <img src="https://cdn.bitrix24.com/b15917383/landing/965/965caaa6885d393138add44f2d57cd50/logo_text_1x.png"  className='img-fluid' style={{height: "40px"}} alt="" />
             </MenuItem>
-            <SubMenu label="Tài khoản" icon={<GroupIcon />}>
+            <SubMenu label="Tài khoản" className='rounded border-2' icon={<GroupIcon />}>
             <a href={'/admin/permissions'}> <MenuItem icon={<GroupIcon />}>Quyền tài khoản</MenuItem></a>
            <a href={'/admin/roles'}> <MenuItem icon={<GroupIcon />}>Loại tài khoản</MenuItem></a>
            <a href={'/admin/users'}> <MenuItem icon={<GroupIcon />}>Tài khoản</MenuItem></a>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../../components/Layout';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import {
@@ -13,17 +13,14 @@ import {
   Avatar,
   ConversationList,
   Conversation,
-  InputToolbox,
-  ExpansionPanel,
-  AttachmentButton,
-  SendButton,
   Search,
 } from '@chatscope/chat-ui-kit-react';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
+
 function Index({ conversation, chats, conversations }) {
   const [dataConversations, setDataConversations] = useState(conversations);
   const [chatName, setChatName] = useState(conversation.name);
@@ -31,8 +28,14 @@ function Index({ conversation, chats, conversations }) {
   const [messages, setMessages] = useState(chats);
   const [isTyping, setIsTyping] = useState(false);
   const [idConversation, setIdConversation] = useState(conversation.id);
+  const [selectedMessageForThread, setSelectedMessageForThread] = useState(null);
+  const [threadMessages, setThreadMessages] = useState({});
   const API_KEY = import.meta.env.VITE_OPEN_AI_KEY;
   const [filterConversation, setFilterConversation] = useState(dataConversations);
+
+  // Ref for auto-scrolling
+  const messageListRef = useRef(null);
+
   const notyf = new Notyf({
     duration: 1000,
     position: { x: 'right', y: 'top' },
@@ -43,6 +46,7 @@ function Index({ conversation, chats, conversations }) {
       { type: 'info', background: '#24b3f0', color: 'white', duration: 1500, dismissible: false, icon: '<i class="bi bi-bag-check"></i>' }
     ]
   });
+
   const handleSendRequest = async (message) => {
     if (!message || message.trim() === '') {
       notyf.error('Message cannot be empty');
@@ -53,23 +57,28 @@ function Index({ conversation, chats, conversations }) {
       message,
       direction: 'outgoing',
       sender: "user",
+      parent_id: selectedMessageForThread ? selectedMessageForThread.id : null,
     };
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setIsTyping(true);
 
     try {
-      // Save user message to database
       await axios.post('/chat', {
         conversation_id: idConversation,
-        sender_id: 1, // Adjust if authenticated
+        sender_id: 1,
         response: 0,
-        content: message
+        content: message,
+        parent_id: selectedMessageForThread ? selectedMessageForThread.id : null
       }).then((res) => {
         setMessages(res.data.data);
+        setThreadMessages((prevThreads) => ({
+          ...prevThreads,
+          [selectedMessageForThread?.id]: [...(prevThreads[selectedMessageForThread?.id] || []), res.data.data]
+        }));
+        setSelectedMessageForThread(null);
       });
 
-      // Get response from ChatGPT
       const response = await processMessageToChatGPT([...messages, newMessage]);
       const content = response.choices[0]?.message?.content;
 
@@ -78,15 +87,16 @@ function Index({ conversation, chats, conversations }) {
           message: content,
           sender: "ChatGPT",
           direction: 'incoming',
+          parent_id: newMessage.parent_id,
         };
         setMessages((prevMessages) => [...prevMessages, chatGPTResponse]);
 
-        // Save bot response to database
         await axios.post('/chat', {
           conversation_id: idConversation,
-          sender_id: 0, // Bot sender ID
+          sender_id: 0,
           response: true,
-          content: content
+          content: content,
+          parent_id: newMessage.parent_id,
         }).then((res) => {
           setMessages(res.data.data);
         });
@@ -100,22 +110,48 @@ function Index({ conversation, chats, conversations }) {
       setIsTyping(false);
     }
   };
+
+  const handleSelectMessageForThread = (message) => {
+    setSelectedMessageForThread(message);
+  };
+
+  const renderThreadMessages = (message) => {
+    const threads = threadMessages[message.id] || [];
+    return (
+      <div className="thread-messages">
+        {threads.map((thread, index) => (
+          <Message
+            key={index}
+            model={{
+              message: thread.content,
+              direction: thread.sender_id !== 0 ? 'outgoing' : 'incoming',
+              position: "single",
+            }}
+          />
+        ))}
+      </div>
+    );
+  };
+
   useEffect(() => {
     axios.get(`/chat/${idConversation}`).then((res) => {
       setMessages(res.data.data);
       setChatName(dataConversations.find((conversation) => conversation.id === idConversation).name);
-    })
-  }, [idConversation])
+    });
+  }, [idConversation]);
+
+  useEffect(() => {
+    // Scroll to the bottom of the message list when messages change
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   async function processMessageToChatGPT(chatMessages) {
     const apiMessages = chatMessages.map((messageObject) => {
       const role = messageObject.sender === "ChatGPT" ? "assistant" : "user";
-      // Ensure that message content is valid
-      if (messageObject.message == null) {
-        console.error("Message content is null or undefined:", messageObject);
-        return null; // Skip invalid messages
-      }
       return { role, content: messageObject.message };
-    }).filter(message => message !== null); // Filter out invalid messages
+    });
 
     const apiRequestBody = {
       model: "gpt-3.5-turbo",
@@ -125,28 +161,18 @@ function Index({ conversation, chats, conversations }) {
       ],
     };
 
-    try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + API_KEY,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(apiRequestBody),
-      });
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(apiRequestBody),
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("API response error:", errorData);
-        throw new Error("Error from API");
-      }
-
-      return response.json();
-    } catch (error) {
-      console.error("Error processing request:", error);
-      throw error;
-    }
+    return response.json();
   }
+
   const handleNewChat = (e) => {
     e.preventDefault();
     axios.post('/admin/conversations', { name: 'New Chat' })
@@ -154,8 +180,9 @@ function Index({ conversation, chats, conversations }) {
         setDataConversations(res.data.data);
         setFilterConversation(res.data.data);
         notyf.success('New chat created successfully');
-      })
-  }
+      });
+  };
+
   const submitEditName = () => {
     if (chatName === '') {
       notyf.error('Conversation name cannot be empty');
@@ -172,6 +199,7 @@ function Index({ conversation, chats, conversations }) {
       })
       .catch(() => notyf.error('Error updating conversation name'));
   };
+
   const handleDeleteConversation = (id) => {
     Swal.fire({
       icon: 'question',
@@ -181,29 +209,28 @@ function Index({ conversation, chats, conversations }) {
       confirmButtonText: "Yes",
       denyButtonText: `No`
     }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         axios.delete(`/admin/conversations/${id}`).then((res) => {
           setDataConversations(res.data.data);
           setFilterConversation(res.data.data);
           notyf.success('Conversation deleted successfully');
-        })
-      } 
+        });
+      }
     });
-    
-  }
+  };
+
   const [info, setInfo] = useState('');
   useEffect(() => {
     setFilterConversation(dataConversations.filter((conversation) => {
       return conversation.name.toLowerCase().includes(info.toLowerCase());
-    }))
-  }, [info])
+    }));
+  }, [info]);
+
   return (
     <Layout>
       <div className="row mt-5">
         <div className="col-md" style={{ height: '700px' }}>
           <MainContainer style={{ height: '600px' }} responsive>
-            {/* Left Sidebar for conversations */}
             <Sidebar position="left" scrollable={false}>
               <Search onKeyUp={(e) => setInfo(e.target.value)} placeholder="Search..." />
               <div className="row justify-content-center">
@@ -217,73 +244,62 @@ function Index({ conversation, chats, conversations }) {
                     <Conversation
                       onClick={() => setIdConversation(conversation.id)}
                       name={conversation.name}
-                      className="flex-grow-1"
                     >
-                      <Avatar
-                        src='https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'
-                        name="Lilly"
-                        status="available"
-                      />
+                      <Avatar />
                     </Conversation>
-                    <button className='btn btn-danger rounded btn-sm ml-2 me-2' onClick={(e) => handleDeleteConversation(conversation.id)}>                      
-                      <DeleteIcon fontSize="small" />
-                    </button>
+                    <DeleteIcon onClick={() => handleDeleteConversation(conversation.id)} />
                   </div>
                 ))}
               </ConversationList>
             </Sidebar>
 
-            {/* Chat Container */}
             <ChatContainer>
               <ConversationHeader>
-                <ConversationHeader.Back />
-                <Avatar src={'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} name="Zoe" />
-                <ConversationHeader.Content userName={chatName} />
+                <Avatar />
+                <ConversationHeader.Content>
+                  {!editName ?
+                    <div className="d-flex align-items-center">
+                      <strong className='me-3'>{chatName}</strong>
+                      <button className='btn btn-sm btn-primary' onClick={() => setEditName(true)}>Edit name</button>
+                    </div> :
+                    <div className="d-flex align-items-center">
+                      <input className="form-control me-3" value={chatName} onChange={(e) => setChatName(e.target.value)} />
+                      <button className="btn btn-sm btn-primary me-1" onClick={submitEditName}>Save</button>
+                      <button className="btn btn-sm btn-danger" onClick={() => setEditName(false)}>Cancel</button>
+                    </div>
+                  }
+                </ConversationHeader.Content>
               </ConversationHeader>
-              <MessageList typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing" /> : null}>
-                {messages.map((message, i) => (
-                  <Message
-                    key={i}
-                    model={{
-                      message: message.content,
-                      direction: message.sender_id !== 0 ? 'outgoing' : 'incoming',
-                      position: "single",
-                    }}
-                  >
-                    <Avatar src={message.sender === "ChatGPT" ? 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png' : 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} />
-                  </Message>
+
+              <MessageList ref={messageListRef} typingIndicator={isTyping ? <TypingIndicator content="ChatGPT is typing..." /> : null}>
+                {messages.length > 0 && messages.map((message, index) => (
+                  <div key={index}>
+                    <Message
+                      model={{
+                        message: message.content,
+                        direction: message.sender_id !== 0 ? 'outgoing' : 'incoming',
+                        position: "single",
+                      }}
+                      onClick={() => handleSelectMessageForThread(message)} // Set thread parent message
+                    />
+                    {renderThreadMessages(message)} {/* Display thread messages */}
+                  </div>
                 ))}
               </MessageList>
-              <MessageInput placeholder="Type a message..." onSend={handleSendRequest} />
+
+              <MessageInput
+                placeholder="Type message here"
+                attachButton={false}
+                onSend={handleSendRequest}
+              >
+                {selectedMessageForThread && (
+                  <div className="replying-to">
+                    <strong>Replying to:</strong> {selectedMessageForThread.content}
+                  </div>
+                )}
+              </MessageInput>
             </ChatContainer>
-
-            {/* Right Sidebar for info panels */}
-            <Sidebar position="right">
-              <ExpansionPanel open title="Chat Name">
-                <div className="input-group mb-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={chatName}
-                    onChange={(e) => setChatName(e.target.value)}
-                    disabled={!editName}
-                    aria-describedby="button-addon2"
-                  />
-                  {editName ? (
-                    <button className="btn btn-outline-primary" type="button" onClick={submitEditName}>
-                      Submit
-                    </button>
-                  ) : (
-                    <button className="btn btn-outline-primary" type="button" onClick={() => setEditName(true)}>
-                      Edit
-                    </button>
-                  )}
-                </div>
-
-              </ExpansionPanel>
-            </Sidebar>
           </MainContainer>
-
         </div>
       </div>
     </Layout>

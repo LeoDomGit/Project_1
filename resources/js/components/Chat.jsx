@@ -1,32 +1,30 @@
 import axios from "axios";
-import { useState,useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+
+// Format date function
 function formatDate(dateString) {
   const date = new Date(dateString);
-
-  // Format date to YYYY-MM-DD
-  const formattedDate = date.toLocaleDateString('en-CA'); // 'en-CA' gives YYYY-MM-DD format
-
-  // Format time to hh:mm AM/PM
+  const formattedDate = date.toLocaleDateString('en-CA');
   const formattedTime = date.toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true, // This will make the time in 12-hour format with AM/PM
+    hour12: true,
   });
-
   return `${formattedDate} ${formattedTime}`;
 }
+
 const API_KEY = import.meta.env.VITE_OPEN_AI_KEY;
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
-function Chat({ datamessages,conversation }) {
 
+function Chat({ datamessages, conversation }) {
   const messagesEndRef = useRef(null);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  const [message,setMessage] = useState('');
-  const [isTyping,setIsTyping] = useState(false);
+  
+  const [message, setMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const notyf = new Notyf({
     duration: 1000,
     position: { x: 'right', y: 'top' },
@@ -38,11 +36,12 @@ function Chat({ datamessages,conversation }) {
     ]
   });
 
-  const [messages,setMessages] = useState(datamessages);
+  const [messages, setMessages] = useState(datamessages);
 
   useEffect(() => {
     scrollToBottom();
-  });
+  }, [messages]);
+
   const handleSendRequest = async (message) => {
     if (!message || message.trim() === '') {
       notyf.error('Message cannot be empty');
@@ -103,21 +102,21 @@ function Chat({ datamessages,conversation }) {
   };
  
   async function processMessageToChatGPT(chatMessages) {
+    // Format the conversation history for the API request
     const apiMessages = chatMessages.map((messageObject) => {
       const role = messageObject.sender === "ChatGPT" ? "assistant" : "user";
-      // Ensure that message content is valid
       if (messageObject.message == null) {
         console.error("Message content is null or undefined:", messageObject);
-        return null; // Skip invalid messages
+        return null;
       }
       return { role, content: messageObject.message };
-    }).filter(message => message !== null); // Filter out invalid messages
+    }).filter(message => message !== null);
 
     const apiRequestBody = {
       model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "You're a helpful assistant." },
-        ...apiMessages,
+        ...apiMessages,  // Include the whole conversation history
       ],
     };
 
@@ -143,9 +142,7 @@ function Chat({ datamessages,conversation }) {
       throw error;
     }
   }
-  const [data, setData] = useState(messages);
-  useEffect(() => {
-  }, []);
+
   return (
     <>
       <div className="chitchat-main small-sidebar" id="content">

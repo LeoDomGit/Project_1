@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\CrawlerController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -35,3 +36,5 @@ Route::group(['middleware' => 'auth'], function () {
 });
 Route::post('/checkLogin', [UserController::class, 'checkLogin']);
 Route::post('/checkLogin-email', [UserController::class, 'checkLoginEmail']);
+
+Route::resource('crawlers', CrawlerController::class);

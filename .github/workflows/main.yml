@@ -96,7 +96,7 @@ jobs:
               .gitignore
               .htaccess
               node_modules/
-
+              vendor/
       - name: Notify Discord
         run: |
           curl -H "Content-Type: application/json" \

@@ -130,29 +130,18 @@ jobs:
 
     steps:
       - name: Notify Discord
-        if: failure() # Only send if the deployment fails
         uses: nobrayner/discord-webhook@v1
         with:
-          github-token: ${{ secrets.TOKEN }}
-          discord-webhook: ${{ secrets.WEBHOOK }}
-          username: "GitHub Actions"
-          avatar-url: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'
-          title: "🚨 Deploy Failed"
+          webhook: ${{ secrets.WEBHOOK }} # Use the secret webhook
+          status: ${{ job.status }} # Pass the job status (Success, Failure, or Cancelled)
+          title: "Deploy Status: ${{ job.status }}" # Include deploy status in the title
           description: |
-            There was an error during the deployment.
-            Check the logs for more details.
-            Error: ${{ job.status }}
-          color-failure: '#eb4034'
-
-      - name: Notify Discord Success
-        if: success() # Only send if the deployment succeeds
-        uses: nobrayner/discord-webhook@v1
-        with:
-          github-token: ${{ secrets.TOKEN }}
-          discord-webhook: ${{ secrets.WEBHOOK }}
+            The deploy process has completed with the following status: **${{ job.status }}**
+            If the deployment failed, check the logs for more information.
+          color: ${{ job.status == 'failure' && '#eb4034' || job.status == 'success' && '#4287f5' || '#42daf5' }} # Color based on status
           username: "GitHub Actions"
-          avatar-url: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'
-          title: "✅ Deploy Successful"
-          description: |
-            Build and deploy to GitHub Pages completed successfully.
-          color-success: '#4287f5'
+          avatar_url: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'
+          nofail: true # Prevent workflow failure if notification fails
+          nocontext: false # Show GitHub context fields
+          noprefix: false # Show status prefix in title
+          nodetail: false # Include both prefix and context

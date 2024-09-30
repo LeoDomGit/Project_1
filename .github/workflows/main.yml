@@ -101,15 +101,8 @@ jobs:
               node_modules/
               vendor/
 
-      - name: Notify   
-        uses: sarisia/actions-status-discord@v1
+      - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
           webhook: ${{ secrets.WEBHOOK }}
-          uses: Leo/action-discord@master
-          title: "deploy"
-          description: "Build and deploy to GitHub Pages"
-          image: 'https://cdn-icons-png.flaticon.com/512/1791/1791334.png'
-          color: 0x0000ff
-          username: GitHub Actions
-          avatar_url: 'https://cdn-icons-png.flaticon.com/512/4711/4711987.png'
+

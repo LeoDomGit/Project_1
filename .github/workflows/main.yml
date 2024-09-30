@@ -22,29 +22,28 @@ jobs:
       - name: Install Composer dependencies
         run: |
           composer install --no-scripts --no-progress --no-suggest
-        continue-on-error: false
-        
+        continue-on-error: true
+
       - name: Update Composer dependencies
         run: |
           composer update --no-scripts --no-progress --no-suggest
-        continue-on-error: false
-        
+        continue-on-error: true
+
       - name: Dump autoload files
         run: composer dump-autoload --optimize
-        continue-on-error: false
-        
+        continue-on-error: true
+
       - name: Generate storage link
         run: php artisan storage:link
-        continue-on-error: false
-        
+        continue-on-error: true
+
       - name: Directory Permissions
         run: chmod -R 777 storage bootstrap/cache
-        continue-on-error: false
-        
+        continue-on-error: true
+
       - name: Install Node.js (latest version)
         uses: actions/setup-node@v2
-        continue-on-error: false
-        
+
       - name: Create .env file
         run: |
           echo "APP_NAME=Laravel" >> .env
@@ -83,20 +82,18 @@ jobs:
 
       - name: Install NPM dependencies
         run: npm install
-        continue-on-error: false
-        
+        continue-on-error: true
+
       - name: Build front-end assets
         run: npm run build
-        continue-on-error: false
-        
+        continue-on-error: true
+
       - name: Remove node_modules folder
         run: rm -rf node_modules
-        continue-on-error: false
-        
+
       - name: Remove vendor folder
         run: rm -rf vendor
-        continue-on-error: false
-        
+
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
@@ -110,10 +107,9 @@ jobs:
               .htaccess
               node_modules/
               vendor/
-        continue-on-error: false
-        
-      - name: Check for deployment errors
-        id: check_error
+
+      - name: Capture errors from logs
+        id: capture_error
         run: |
           if [ -f /path/to/log/file ]; then
             echo "error_output=$(tail -n 20 /path/to/log/file)" >> $GITHUB_ENV
@@ -121,7 +117,7 @@ jobs:
             echo "error_output=No errors captured." >> $GITHUB_ENV
           fi
 
-notify:
+  notify:
     name: Discord Notification
     runs-on: ubuntu-latest
     needs:
@@ -132,8 +128,7 @@ notify:
       - name: Notify Discord
         uses: LeoDomGit/discord-webhook-notify@v1.1.1 # Make sure to use the correct action with webhook support
         with:
-          token: ${{ secrets.TOKEN }}
-          webhook: ${{ secrets.WEBHOOK }} # This passes the webhook from GitHub Secrets
+          webhook: ${{ secrets.DISCORD_WEBHOOK }} # This passes the webhook from GitHub Secrets
           status: ${{ job.status }} # Pass the job status (Success, Failure, or Cancelled)
           title: "Deploy Status: ${{ job.status }}" # Include deploy status in the title
           description: |

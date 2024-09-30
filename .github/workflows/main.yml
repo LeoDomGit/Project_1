@@ -109,27 +109,16 @@ jobs:
     if: ${{ always() }} # You always want to be notified: success, failure, or cancelled
 
     steps:
-      - name: Set Status Message
-        id: status_message
-        run: |
-          if [[ ${{ job.status }} == 'success' ]]; then
-            echo "::set-output name=message::${{ github.workflow }} deployed successfully!"
-            echo "::set-output name=color::'#42daf5'" # Success color
-          else
-            echo "::set-output name=message::${{ github.workflow }} deployment failed! Check the logs for errors."
-            echo "::set-output name=color::'#eb4034'" # Failure color
-            echo "Errors: ${{ steps.web-deploy.outputs.error_message }}" >> errors.log
-            cat errors.log # Display error log if needed
-          fi
-
       - name: Notify
         uses: nobrayner/discord-webhook@v1
         with:
-          github-token: ${{ secrets.TOKEN }}
-          discord-webhook: ${{ secrets.WEBHOOK }}
-          username: 'Bot'
-          avatar-url: 'https://octodex.github.com/images/Terracottocat_Single.png'
-          title: '${{ github.workflow }}: ${{ steps.status_message.outputs.message }}'
-          description: '${{ github.event_name }} triggered this workflow!'
-          include-details: 'false'
-          color: ${{ steps.status_message.outputs.color }}
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          content: "Hey <@316911818725392384>"
+          title: "Deploy"
+          description: "Build and deploy to GitHub Pages"
+          image: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'
+          color: 0x0000ff
+          url: "https://github.com/sarisia/actions-status-discord"
+          username: "GitHub Actions"
+          avatar_url: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'

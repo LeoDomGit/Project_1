@@ -22,28 +22,28 @@ jobs:
       - name: Install Composer dependencies
         run: |
           composer install --no-scripts --no-progress --no-suggest
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Update Composer dependencies
         run: |
           composer update --no-scripts --no-progress --no-suggest
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Dump autoload files
         run: composer dump-autoload --optimize
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Generate storage link
         run: php artisan storage:link
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Directory Permissions
         run: chmod -R 777 storage bootstrap/cache
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Install Node.js (latest version)
         uses: actions/setup-node@v2
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Create .env file
         run: |
@@ -83,19 +83,19 @@ jobs:
 
       - name: Install NPM dependencies
         run: npm install
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Build front-end assets
         run: npm run build
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Remove node_modules folder
         run: rm -rf node_modules
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Remove vendor folder
         run: rm -rf vendor
-        continue-on-error: true
+        continue-on-error: false
         
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
@@ -110,7 +110,7 @@ jobs:
               .htaccess
               node_modules/
               vendor/
-        continue-on-error: true
+        continue-on-error: false
         
       - name: Check for deployment errors
         id: check_error
@@ -130,16 +130,29 @@ jobs:
 
     steps:
       - name: Notify Discord
+        if: failure() # Only send if the deployment fails
         uses: nobrayner/discord-webhook@v1
         with:
           github-token: ${{ secrets.TOKEN }}
           discord-webhook: ${{ secrets.WEBHOOK }}
           username: "GitHub Actions"
           avatar-url: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'
-          title: "Deploy Status: ${{ job.status }}"
+          title: "🚨 Deploy Failed"
           description: |
-            Build and deploy to GitHub Pages: ${{ job.status }}.
-            Error output (if any): ${{ env.error_output }}
-          color-success: '#4287f5'
+            There was an error during the deployment.
+            Check the logs for more details.
+            Error: ${{ job.status }}
           color-failure: '#eb4034'
-          color-cancelled: '#42daf5'
+
+      - name: Notify Discord Success
+        if: success() # Only send if the deployment succeeds
+        uses: nobrayner/discord-webhook@v1
+        with:
+          github-token: ${{ secrets.TOKEN }}
+          discord-webhook: ${{ secrets.WEBHOOK }}
+          username: "GitHub Actions"
+          avatar-url: 'https://cdn-icons-png.flaticon.com/512/4712/4712086.png'
+          title: "✅ Deploy Successful"
+          description: |
+            Build and deploy to GitHub Pages completed successfully.
+          color-success: '#4287f5'

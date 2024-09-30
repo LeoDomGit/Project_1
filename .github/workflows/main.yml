@@ -106,6 +106,7 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.WEBHOOK }}
+          uses: Leo/action-discord@master
           title: "deploy"
           description: "Build and deploy to GitHub Pages"
           image: 'https://cdn-icons-png.flaticon.com/512/1791/1791334.png'

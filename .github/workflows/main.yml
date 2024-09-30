@@ -104,5 +104,6 @@ jobs:
         run: |
           curl -H "Content-Type: application/json" \
           -X POST \
-          -d "{\"content\": \"Deployment of Laravel project to main branch was successful!\"}" \
+          -d "{\"username\": \"GitHub Actions Bot\", \"content\": \"Deployment of Laravel project to main branch was successful!\"}" \
           https://discord.com/api/webhooks/1290173164361617450/gWskGSNJBzK6jdEqe3-UNRB63jZcwm1yeHtA-pbYZlxvyCTiOzwTjXNohxzfsZUmbw1E/github
+

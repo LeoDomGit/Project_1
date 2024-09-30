@@ -133,6 +133,7 @@ jobs:
         uses: nobrayner/discord-webhook@v1
         with:
           webhook: ${{ secrets.WEBHOOK }} # Use the secret webhook
+          github-token: ${{ secrets.TOKEN }}
           status: ${{ job.status }} # Pass the job status (Success, Failure, or Cancelled)
           title: "Deploy Status: ${{ job.status }}" # Include deploy status in the title
           description: |

@@ -37,4 +37,4 @@ Route::group(['middleware' => 'auth'], function () {
 Route::post('/checkLogin', [UserController::class, 'checkLogin']);
 Route::post('/checkLogin-email', [UserController::class, 'checkLoginEmail']);
 
-Route::resource('crawlers', CrawlerController::class);
+Route::resource('crawlers', CrawlerController::class)

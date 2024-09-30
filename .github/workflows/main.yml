@@ -84,6 +84,9 @@ jobs:
       - name: Remove node_modules folder
         run: rm -rf node_modules
 
+      - name: Remove vendor folder
+        run: rm -rf vendor
+
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:

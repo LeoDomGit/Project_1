@@ -43,12 +43,6 @@ jobs:
       - name: Install Node.js (latest version)
         uses: actions/setup-node@v2
 
-      - name: Create .env file
-        run: |
-          echo "APP_NAME=Laravel" >> .env
-          # ... Other environment variables
-        continue-on-error: false
-
       - name: Install NPM dependencies
         run: npm install
         continue-on-error: false

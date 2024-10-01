@@ -72,9 +72,10 @@ jobs:
           echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
           echo "MAIL_ENCRYPTION=tls" >> .env
           echo "MAIL_FROM_ADDRESS=${{ secrets.MAIL_FROM_ADDRESS }}" >> .env
-          echo "MAIL_FROM_NAME='Laravel'" >> .env
+          echo "MAIL_FROM_NAME='Dashboard'" >> .env
           echo "VITE_OPEN_AI_KEY=${{ secrets.VITE_OPEN_AI_KEY }}" >> .env
-
+          echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_KEY }}" >> .env
+          
       - name: Remove node_modules folder
         run: rm -rf node_modules
 

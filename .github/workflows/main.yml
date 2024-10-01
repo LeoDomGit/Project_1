@@ -94,15 +94,6 @@ jobs:
               .htaccess
               node_modules/
               vendor/
-
-      - name: Check for deployment errors
-        id: check_error
-        run: |
-          if [ -f /path/to/log/file ]; then
-            echo "error_output=$(tail -n 20 /path/to/log/file)" >> $GITHUB_ENV
-          else
-            echo "error_output=No errors captured." >> $GITHUB_ENV
-
   notify:
     name: Discord Notification
     runs-on: ubuntu-latest

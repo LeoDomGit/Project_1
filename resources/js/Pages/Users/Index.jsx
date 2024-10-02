@@ -120,7 +120,7 @@ function Index({roles,users,title}) {
                         setData(res.data.data);
                         resetCreate()
                     } else {
-                        setUsers([]);
+                        setData([]);
                     }
                 }
             })
@@ -146,7 +146,7 @@ function Index({roles,users,title}) {
                 if (res.data.data) {
                     setData(res.data.data);
                 } else {
-                    setUsers([]);
+                    setData([]);
                 }
             }
         })
@@ -220,7 +220,7 @@ function Index({roles,users,title}) {
         },
         {
             headerName: 'Roles',
-            width: 70,
+            width: 180,
             renderCell: (params) => (
                 <button className="btn btn-sm btn-primary" onClick={() => setEditRole(params.id)}>
                     Roles
@@ -261,7 +261,7 @@ function Index({roles,users,title}) {
                         type: "success",
                         message: "User is updated successfully",
                     });
-                    setUsers(res.data.data);
+                    setData(res.data.data);
                 } else if (res.data.check == false) {
                     notyf.open({
                         type: "error",

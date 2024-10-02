@@ -93,7 +93,6 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
-        $user = User::where('email', $request->email)->first();
         if(Auth::attempt(['email'=>$request->email,'password'=>$request->password,'status'=>1],true)){
             return response()->json(['check' => true, 'msg' => 'Đăng nhập thành công']);
         }else{

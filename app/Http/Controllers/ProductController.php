@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brands;
+use App\Models\Categories;
 use App\Models\Products;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -20,7 +23,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        $brands=Brands::active();
+        $categories=Categories::active();
+        return Inertia::render("Products/Create");
     }
 
     /**

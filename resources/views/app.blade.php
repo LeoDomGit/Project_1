@@ -8,7 +8,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.jsx'])
         @inertiaHead
         <meta name="csrf-token" content="{{ csrf_token() }}"> 
-        {{-- <script src="{{ asset('ckeditor/ckeditor.js') }}"></script> --}}
+        <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
     </head>
     <body>
         @inertia

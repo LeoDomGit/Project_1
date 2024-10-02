@@ -6,6 +6,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\CrawlerController;
 use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('conversations', ConversationController::class);
         Route::resource('brands', BrandController::class);
         Route::resource('categories', CategoriesController::class);
+        Route::resource('products', ProductController::class);
 
 
     });
@@ -44,3 +46,7 @@ Route::post('/checkLogin', [UserController::class, 'checkLogin']);
 Route::post('/checkLogin-email', [UserController::class, 'checkLoginEmail']);
 
 Route::resource('crawlers', CrawlerController::class);
+
+Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web']], function () {
+    \UniSharp\LaravelFilemanager\Lfm::routes();
+});

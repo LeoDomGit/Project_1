@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\CrawlerController;
@@ -29,6 +31,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('/conversations', ConversationController::class);
         Route::put('users/switch/{id}',[UserController::class,'switch']);
         Route::resource('conversations', ConversationController::class);
+        Route::resource('brands', BrandController::class);
+        Route::resource('categories', CategoriesController::class);
+
+
     });
     Route::resource('/chat', ChatController::class)->middleware('auth');
     Route::get('/logout', [UserController::class, 'logout']);

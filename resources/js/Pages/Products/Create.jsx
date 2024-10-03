@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../../components/Layout';
 import CKEditor from '../../components/CKEditor';
-import axios from 'axios';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 
@@ -30,7 +29,7 @@ function Create() {
     }
 
     try {
-      const prompt = `Create a product introduction in vietnamese for ${name}, including its features, price of ${price} VND, and a compare price of ${compare_price} VND. The content should be around 1200 words and engaging. And make html css for it as a content with paragraphs, font-size of text min 16px`;
+      const prompt = `Create a product introduction in Vietnamese for ${name}, including its features, price of ${price} VND, and a compare price of ${compare_price} VND. The content should be around 1200 words and engaging. And make HTML CSS for it as content with paragraphs, font-size of text min 16px`;
 
       const apiRequestBody = {
         model: "gpt-3.5-turbo",
@@ -82,54 +81,60 @@ function Create() {
     };
   }, [name]); // Dependency array listens for changes in 'name'
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(value);
+  };
+
   return (
     <>
       <Layout>
-        <>
         <div className="row">
           <div className="col-md-8">
-          <div class="card text-start border-0 shadow">
-            <div class="card-body">
-            <div className="row mt-5">
-            <div className="col-md-3">
-              <label htmlFor="">Tên sản phẩm</label>
-              <input
-                type="text"
-                className="form-control"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+            <div className="card text-start border-0 shadow">
+              <div className="card-body">
+                <div className="row mt-5">
+                  <div className="col-md-3">
+                    <label htmlFor="">Tên sản phẩm</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-3">
+                    <label htmlFor="">Giá so sánh</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={compare_price}
+                      onChange={(e) => setComparePrice(Number(e.target.value))}
+                    />
+                    <small>{formatCurrency(compare_price)}</small> {/* Display formatted currency */}
+                  </div>
+                  <div className="col-md-3">
+                    <label htmlFor="">Giá sản phẩm</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      value={price}
+                      onChange={(e) => setPrice(Number(e.target.value))}
+                    />
+                    <small>{formatCurrency(price)}</small> {/* Display formatted currency */}
+                  </div>
+                </div>
+                <div className="row mt-3">
+                  <div className="col-md">
+                    <CKEditor value={content} onBlur={(newContent) => setContent(newContent)} />
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="col-md-3">
-              <label htmlFor="">Giá sản phẩm</label>
-              <input
-                type="number"
-                className="form-control"
-                value={compare_price}
-                onChange={(e) => setComparePrice(e.target.value)}
-              />
-            </div>
-            <div className="col-md-3">
-              <label htmlFor="">Giá khuyến mãi</label>
-              <input
-                type="number"
-                className="form-control"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="row mt-3">
-            <div className="col-md">
-              <CKEditor value={content} onBlur={(newContent) => setContent(newContent)} />
-            </div>
-          </div>
-            </div>
-          </div>
           </div>
         </div>
-          
-        </>
       </Layout>
     </>
   );

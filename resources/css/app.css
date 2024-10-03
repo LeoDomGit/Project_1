@@ -7,3 +7,6 @@ a {
 .cs-message__html-content{
     color: black;
 }
+.cke_notification{
+    display: none !important;   
+}

@@ -35,8 +35,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('brands', BrandController::class);
         Route::resource('categories', CategoriesController::class);
         Route::resource('products', ProductController::class);
-
-
     });
     Route::resource('/chat', ChatController::class)->middleware('auth');
     Route::get('/logout', [UserController::class, 'logout']);

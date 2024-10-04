@@ -71,7 +71,8 @@ jobs:
           echo "MAIL_FROM_NAME='Dashboard'" >> .env
           echo "VITE_OPEN_AI_KEY=${{ secrets.VITE_OPEN_AI_KEY }}" >> .env
           echo "VITE_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_KEY }}" >> .env
-
+          echo "VITE_OPEN_AI_KEY=${{ secrets.VITE_OPEN_AI_KEY }}" >> .env
+          
       - name: Build front-end assets
         run: npm run build
         continue-on-error: false

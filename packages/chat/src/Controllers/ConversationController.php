@@ -42,9 +42,9 @@ class ConversationController extends Controller
         }
         $conversation = Conversation::create([
             'name' => $request->name,
-            'user_id' => Auth::id(),
+            'user_id' =>  $request->session()->get('user')->id,
         ]);
-        $conversations = Conversation::where('user_id',Auth::id())->get();
+        $conversations = Conversation::where('user_id', $request->session()->get('user')->id)->get();
         return response()->json(['check' => true, 'data' => $conversations]);    
     }
 
@@ -85,14 +85,14 @@ class ConversationController extends Controller
         $conversation->name = $request->name;
         $conversation->updated_at = now();
         $conversation->save();
-        $conversations = Conversation::where('user_id',Auth::id())->get();
+        $conversations = Conversation::where('user_id', $request->session()->get('user')->id)->get();
         return response()->json(['check' => true, 'data' => $conversation,'conversations'=>$conversations]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         $conversation = Conversation::find($id);
         if(!$conversation){
@@ -100,7 +100,7 @@ class ConversationController extends Controller
         }
         Chat::where('conversation_id',$id)->delete();
         $conversation->delete();
-        $conversations = Conversation::where('user_id',Auth::id())->get();
+        $conversations = Conversation::where('user_id', $request->session()->get('user')->id)->get();
         return response()->json(['check' => true, 'data' => $conversations]);
     }
 }

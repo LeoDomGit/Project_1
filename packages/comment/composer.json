@@ -1,0 +1,38 @@
+{
+    "name": "khanhduy/comment",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Khanhduy\\Comment\\": "src/",
+            "Khanhduy\\Comment\\Providers\\": "src/Providers"
+        },
+        "classmap": [
+            "src/Controllers",
+            "src/Models",
+            "src/Providers",
+            "./routes"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Khanhduy\\Comment\\Providers\\CommentServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "devcontainerDuy",
+            "email": "khanhduytran1803@gmail.com"
+        }
+    ],
+    "require": {},
+    "repositories": [],
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

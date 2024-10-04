@@ -1,9 +1,10 @@
 *{
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Times New Roman', Times, serif;
 }
 a {
     text-decoration: none !important;
+    color: black !important;
 }
-.cs-message__html-content{
-    color: black;
+.notyf{
+    color: black !important;
 }

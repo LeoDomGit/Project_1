@@ -1,0 +1,32 @@
+{
+    "name": "leo/chat",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Leo\\Chat\\": "src/",
+            "Leo\\Chat\\Providers\\": "src/Providers"
+        },
+        "classmap": [
+            "src/Controllers",
+            "src/Models",
+            "src/Providers",
+            "./routes"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Leo\\Chat\\Providers\\ChatServiceProvider"
+            ]
+        }
+    },
+    "require": {},
+    "repositories": [],
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

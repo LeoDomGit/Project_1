@@ -29,7 +29,7 @@ function Index({ permissions, roles }) {
         return date.toLocaleString();
     };
     const submitRolePermission = ()=>{
-      axios.post('/admin/role-permissions',{
+      axios.post('/permissions/add-role-permision',{
         role:idRole,
         permissions:selectedPermissions
       }).then((res)=>{
@@ -107,7 +107,7 @@ function Index({ permissions, roles }) {
     ];
     const submitpermission = () => {
         axios
-            .post("/admin/permissions", {
+            .post("/permissions", {
                 name: permission,
             })
             .then((res) => {
@@ -127,7 +127,7 @@ function Index({ permissions, roles }) {
             });
     };
     useEffect(()=>{
-      fetch('/admin/permissions/roles/'+idRole)
+      fetch('/permissions/roles/'+idRole)
       .then((res)=>res.json())
       .then((res)=>{
         setSelectedPermissions(res.permissions);
@@ -141,7 +141,7 @@ function Index({ permissions, roles }) {
         if (value != "") {
             axios
                 .put(
-                    `/admin/permissions/${id}`,
+                    `/permissions/${id}`,
                     {
                         name: value,
                     }
@@ -240,7 +240,7 @@ function Index({ permissions, roles }) {
                             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li className="nav-item">
                                     <a
-                                        className="btn btn-primary"
+                                        className="btn btn-primary text-light"
                                         onClick={(e) => resetCreate()}
                                         aria-current="page"
                                         href="#"

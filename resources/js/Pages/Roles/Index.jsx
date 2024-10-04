@@ -7,7 +7,8 @@ import { Box, Typography } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import 'notyf/notyf.min.css';
 import axios from 'axios';
-function Index({ roles,title }) {
+import Swal from 'sweetalert2'
+function Index({ roles }) {
   const [role, setRole] = useState('');
   const [data, setData] = useState(roles)
   const [show, setShow] = useState(false);
@@ -67,7 +68,7 @@ function Index({ roles,title }) {
     }
   ];
   const submitRole = () => {
-    axios.post('/admin/roles', {
+    axios.post('/roles', {
       name: role
     }).then((res) => {
       if (res.data.check == true) {
@@ -91,9 +92,30 @@ function Index({ roles,title }) {
     setShow(true)
   }
   const handleCellEditStop = (id, field, value) => {
-    axios
+    if(value==''){
+      Swal.fire({
+        icon:'question',
+        text: "Bạn muốn xóa loại tài khoản này ?",
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: "Đúng",
+        denyButtonText: `Không`
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          axios.delete('/roles/'+id).then((res)=>{
+            if(res.data.check==true){
+              notyf.success("Đã xóa thành công");
+              setData(res.data.data)
+            }
+          })
+        } else if (result.isDenied) {
+        }
+      });
+    }else{
+      axios
       .put(
-        `/admin/roles/${id}`,
+        `/roles/${id}`,
         {
           name: value,
         },
@@ -119,10 +141,12 @@ function Index({ roles,title }) {
           });
         }
       });
+    }
+  
   };
   return (
 
-    <Layout title={title}>
+    <Layout>
       <>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
@@ -135,7 +159,7 @@ function Index({ roles,title }) {
             <Button variant="secondary" onClick={handleClose}>
               Đóng
             </Button>
-            <Button variant="primary" disabled={role == '' ? true : false} onClick={(e) => submitRole()}>
+            <Button variant="primary text-light" disabled={role == '' ? true : false} onClick={(e) => submitRole()}>
               Tạo mới
             </Button>
           </Modal.Footer>
@@ -156,7 +180,7 @@ function Index({ roles,title }) {
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <a className="btn btn-primary" onClick={(e) => resetCreate()} aria-current="page" href="#">
+                  <a className="btn btn-primary text-light" onClick={(e) => resetCreate()} aria-current="page" href="#">
                     Tạo mới
                   </a>
                 </li>

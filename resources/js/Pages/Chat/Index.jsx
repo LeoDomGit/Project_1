@@ -149,7 +149,7 @@ function Index({ conversation, chats, conversations }) {
   }
   const handleNewChat = (e) => {
     e.preventDefault();
-    axios.post('/admin/conversations', { name: 'New Chat' })
+    axios.post('/conversations', { name: 'New Chat' })
       .then((res) => {
         setDataConversations(res.data.data);
         setFilterConversation(res.data.data);
@@ -162,7 +162,7 @@ function Index({ conversation, chats, conversations }) {
       return;
     }
 
-    axios.put(`/admin/conversations/${idConversation}`, { name: chatName })
+    axios.put(`/conversations/${idConversation}`, { name: chatName })
       .then((res) => {
         setChatName(res.data.data.name);
         setEditName(false);
@@ -183,7 +183,7 @@ function Index({ conversation, chats, conversations }) {
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        axios.delete(`/admin/conversations/${id}`).then((res) => {
+        axios.delete(`/conversations/${id}`).then((res) => {
           setDataConversations(res.data.data);
           setFilterConversation(res.data.data);
           notyf.success('Conversation deleted successfully');
@@ -246,11 +246,11 @@ function Index({ conversation, chats, conversations }) {
                     key={i}
                     model={{
                       message: message.content,
-                      direction: message.sender_id !== 0 ? 'outgoing' : 'incoming',
+                      direction: message.response == 0 ? 'outgoing' : 'incoming',
                       position: "single",
                     }}
                   >
-                    <Avatar src={message.sender === "ChatGPT" ? 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png' : 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png'} />
+                    <Avatar src={message.response != 0 ? 'https://cdn.prod.website-files.com/6411daab15c8848a5e4e0153/6476e947d3fd3c906c9d4da6_4712109.png' : 'https://cdn-icons-png.flaticon.com/512/5231/5231019.png'} />
                   </Message>
                 ))}
               </MessageList>

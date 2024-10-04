@@ -46,6 +46,6 @@ trait HasCrud
     {
         $record = $model::findOrFail($id);
         $record->delete();
-        return $this->indexTraits($model);
+        return true;
     }
 }

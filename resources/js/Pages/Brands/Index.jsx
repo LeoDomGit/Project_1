@@ -90,7 +90,7 @@ function Index({ brands }) {
   ];
   const submitBrand = () => {
     axios
-      .post("/admin/brands", {
+      .post("/brands", {
         name: brand,
       })
       .then((res) => {
@@ -119,7 +119,7 @@ function Index({ brands }) {
     var field = params.field;
     axios
       .put(
-        `/admin/brands/${id}`,
+        `/brands/${id}`,
         {
           [field]: value,
         }
@@ -149,7 +149,7 @@ function Index({ brands }) {
     if (value != "") {
       axios
         .put(
-          `/admin/brands/${id}`,
+          `/brands/${id}`,
           {
             name: value,
           }
@@ -187,7 +187,7 @@ function Index({ brands }) {
         if (result.isConfirmed) {
           axios
             .delete(
-              `/admin/brands/${id}`
+              `/brands/${id}`
               // {
               //     headers: {
               //         Authorization: `Bearer ${localStorage.getItem("token")}`,

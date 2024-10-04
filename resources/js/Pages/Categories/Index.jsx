@@ -104,7 +104,7 @@ const renderParentSelect = (params) => {
     var field = params.field;
     axios
       .put(
-        `/admin/categories/${id}`,
+        `/categories/${id}`,
         {
           [field]: value,
         }
@@ -126,7 +126,7 @@ const renderParentSelect = (params) => {
       });
   };
   const submitCategory = () => {
-    axios.post('/admin/categories', {
+    axios.post('/categories', {
       id_parent:id_parent,
       name: category
     }).then((res) => {
@@ -154,7 +154,7 @@ const renderParentSelect = (params) => {
     if(value!=''){
         axios
         .put(
-          `/admin/categories/${id}`,
+          `/categories/${id}`,
           { [field]: value },
           // {
           //     headers: {
@@ -192,7 +192,7 @@ const renderParentSelect = (params) => {
           if (result.isConfirmed) {
               axios
               .delete(
-                `/admin/categories/${id}`,
+                `/categories/${id}`,
                 // {
                 //     headers: {
                 //         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -221,7 +221,7 @@ const renderParentSelect = (params) => {
       }else{
         axios
         .put(
-          `/admin/categories/${id}`,
+          `/categories/${id}`,
           { [field]: value },
           // {
           //     headers: {

@@ -61,7 +61,6 @@ function Chat({ datamessages, conversation }) {
       // Save user message to database
       await axios.post('/chat', {
         conversation_id: conversation.id,
-        sender_id: 1, // Adjust if authenticated
         response: 0,
         content: message
       }).then((res) => {
@@ -297,9 +296,10 @@ function Chat({ datamessages, conversation }) {
             <div className="contact-chat">
               <ul className="chatappend">
                 {messages.length > 0 && messages.map((message, index) => (
-                  message.sender_id != 0 ? (
+                  message.response == 0 ? (
                     <li className="replies" key={index}>
-                      <div className="d-flex">
+                      <div className="d-flex"> 
+                        {message.response}
                         <div className="profile">
                           <img className="bg-img" src="../assets/images/contact/2.jpg" alt="Avatar" />
                         </div>

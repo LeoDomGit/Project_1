@@ -15,6 +15,7 @@ import DialerSipIcon from "@mui/icons-material/DialerSip";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import BookIcon from "@mui/icons-material/Book";
 import CommentIcon from "@mui/icons-material/Comment";
+import ChatIcon from '@mui/icons-material/Chat';
 import "../../css/app.css";
 function Layout({ children }) {
 	const { collapseSidebar } = useProSidebar();
@@ -71,6 +72,9 @@ function Layout({ children }) {
 						</a>
 						<a href={"/comments"}>
 							<MenuItem icon={<CommentIcon />}>Bình luận</MenuItem>
+						</a>
+						<a href={"/chat"}>
+							<MenuItem icon={<ChatIcon />}>Chat</MenuItem>
 						</a>
 						<a href={"/bills"}>
 							<MenuItem icon={<CardTravelIcon />}>Hoá đơn</MenuItem>

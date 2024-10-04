@@ -77,6 +77,9 @@ jobs:
         run: npm run build
         continue-on-error: false
         
+      - name: Remove hot file in public folder
+        run: rm -f public/hot   
+        
       - name: Remove node_modules folder
         run: rm -rf node_modules
 

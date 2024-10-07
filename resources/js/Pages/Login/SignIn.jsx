@@ -95,7 +95,7 @@ export default function SignInSide() {
             }).catch((error) => {
                 notyf.open({
                     type: "error",
-                    message: "An error occurred. Please try again.",
+                    message: "Sai tên đăng nhập hoặc mật khẩu.",
                 });
             });
         }

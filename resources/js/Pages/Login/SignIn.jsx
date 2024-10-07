@@ -16,7 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Notyf } from "notyf";
 import 'notyf/notyf.min.css';
 import axios from 'axios';
-
+import { googleLogout, useGoogleLogin } from '@react-oauth/google';
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
@@ -100,7 +100,44 @@ export default function SignInSide() {
             });
         }
     };
+    const [ user, setUser ] = React.useState([]);
+    const [ profile, setProfile ] = React.useState([]);
 
+    const login = useGoogleLogin({
+        onSuccess: (codeResponse) => setUser(codeResponse),
+        onError: (error) => console.log('Login Failed:', error)
+    });
+    React.useEffect(
+        () => {
+            if (user) {
+                axios
+                    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: 'application/json'
+                        }
+                    })
+                    .then((res) => {
+                        console.log(res.data.email);
+                        axios.post('/api/users/checkLoginWithEmail',{
+                            email:res.data.email
+                        }).then((res)=>{
+                            if(res.data.check==true){
+                                notyf.open({
+                                    type: "success",
+                                    message: "Đăng nhập thành công",
+                                });
+                                setTimeout(() => {
+                                    window.location.replace('/users');
+                                }, 2000);
+                            }
+                        })
+                    })
+                    .catch((err) => console.log(err));
+            }
+        },
+        [ user ]
+    );
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
@@ -168,18 +205,8 @@ export default function SignInSide() {
                             >
                                 Đăng nhập
                             </Button>
-                            <Grid container>
-                                <Grid item xs>
-                                    <Link href="#" variant="body2">
-                                        Forgot password?
-                                    </Link>
-                                </Grid>
-                                <Grid item>
-                                    <Link href="#" variant="body2">
-                                        {"Don't have an account? Sign Up"}
-                                    </Link>
-                                </Grid>
-                            </Grid>
+                            <button className='btn btn-outline-primary' onClick={login}>Sign in with Google 🚀 </button>
+                            
                         </Box>
                     </Box>
                 </Grid>

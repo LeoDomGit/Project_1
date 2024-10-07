@@ -25,5 +25,6 @@ Route::post('/users/checkLogin',[UserController::class,'checkLogin'])->middlewar
 Route::put('/users/switch/{id}', [UserController::class,'switchUser'])->middleware(['web']);
 Route::post('/api/manager/checkLogin',[UserController::class,'checkLoginManager']);
 Route::get('/api/staff', [UserController::class,'staff_list']);
+Route::post('/api/users/checkLoginWithEmail', [UserController::class,'checkLoginWithEmail'])->middleware('web');
 
 

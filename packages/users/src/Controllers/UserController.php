@@ -51,6 +51,24 @@ class UserController
         return response()->json($users);
     }
 
+    public function checkLoginWithEmail(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email'=>'required|email|exists:users,email',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['check'=>false,'msg'=>$validator->errors()->first()]);
+        }
+        $user = $this->model::where('email', $request->email)->first();
+        if($user){
+            $request->session()->put('user', $user);
+            $request->session()->regenerate();
+            return response()->json(['check'=>true]);
+        }else{
+            return response()->json(['check'=>false,'msg'=> 'Email không tồn tại']);
+
+        }
+    }
+    
     public function store(StoreRequest $request)
     {
         $data = $request->all();

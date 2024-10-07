@@ -149,7 +149,10 @@ function Edit({dataId,dataBrand,dataCate,dataproduct,datagallery,dataimage}) {
     }
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setProduct({ [name]: value });
+        setProduct((prevProduct) => ({
+            ...prevProduct, // Spread the previous state
+            [name]: value,  // Update the specific field
+        }));
         
     };
     const handleDelete = (e)=>{

@@ -121,7 +121,7 @@ function Index({conversation, chats, conversations}) {
       }).filter(message => message !== null); // Filter out invalid messages
   
       const apiRequestBody = {
-        model: "gpt-3.5-turbo",
+        model: "GPT-4o mini",
         messages: [
           { role: "system", content: "You're a helpful assistant." },
           ...apiMessages,

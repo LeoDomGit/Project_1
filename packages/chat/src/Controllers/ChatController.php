@@ -50,14 +50,13 @@ class ChatController extends Controller
             'content' => 'required',
         ], [
             'conversation_id.required' => 'Chưa có tên của chat box',
-            'content.required' => 'Chưa có tên của chat box',
-            
+            'content.required' => 'Chưa có message',
         ]);
         if ($validator->fails()) {
             return response()->json(['check' => false, 'msg' => $validator->errors()->first()]);
         }
         $data=$request->all();
-        $data['sender_id']= $request->session()->get('user')->id;
+        $data['sender_id']= Auth::id();
         $data['created_at']=now();
         Chat::create($data);
         $data=Chat::where('conversation_id',$data['conversation_id'])->get();

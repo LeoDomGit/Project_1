@@ -6,7 +6,6 @@ const CKEditor = ({ onBlur, value }) => {
     useEffect(() => {
         if (window.CKEDITOR) {
             const options = {
-                extraPlugins: 'image',
                 filebrowserImageBrowseUrl: '/laravel-filemanager?type=Images',
                 filebrowserImageUploadUrl: '/laravel-filemanager/upload?type=Images&_token=',
                 filebrowserBrowseUrl: '/laravel-filemanager?type=Files',
